@@ -81,7 +81,7 @@ function createSendToken(user, statusCode, res) {
     expiresIn: jwtCookieExpires,
     httpOnly: true,
   };
-  if (nodeEnv === "development") cookieOptions.secure = true;
+  if (nodeEnv === "production") cookieOptions.secure = true;
 
   res.cookie("jwt", token, cookieOptions);
 
