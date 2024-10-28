@@ -68,10 +68,7 @@ const getAllUser = async (req, res) => {
 const getUserbyID = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await userModel
-      .findById(id)
-      .populate("role")
-      .populate("ProjectID");
+    const user = await userModel.findById(id)
     if (user != null || user != undefined)
       res.status(200).json({
         message: "User Fetched successfully",
