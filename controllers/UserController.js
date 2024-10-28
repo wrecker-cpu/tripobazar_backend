@@ -3,19 +3,15 @@ const encrypt = require("../utils/Encrypt");
 const auth = require("../auth/AuthValidation");
 require("dotenv").config();
 
-//create user
+// Create user
 const createUser = async (req, res) => {
-  //ravikumar123
-
-  //db.users.insert({data})
-
   try {
     const user = {
       Email: req.body.Email,
-      Password: encrypt.generatePassword(req.body.Password),
+      Password: encrypt.generatePassword(req.body.Password), // Ensure async if possible
       MobileNumber: req.body.MobileNumber,
-      FullName:"",
-      DateOfBirth:"",
+      FullName: "",
+      DateOfBirth: "",
       status: req.body.status,
       isAdmin: "false",
       passwordChangedAt: Date.now(),
@@ -23,142 +19,100 @@ const createUser = async (req, res) => {
 
     const savedUser = await userModel.create(user);
     if (savedUser) {
-      // Set the token in the user object // Save the updated user document
       auth.createSendToken(savedUser, 201, res);
     } else {
-      res.status(400).json({
-        message: "Incomplete User Details",
-      });
+      res.status(400).json({ message: "Incomplete User Details" });
     }
   } catch (error) {
-    res.status(500).json({
-      message: "Error in creating",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ message: "Error in creating", error: error.message });
   }
 };
 
-// mailUtil.sendMail(
-//     user.UserEmail,
-//     "Welcome to Better Housing",
-//     `<div style="font-size: 20px;">Welcome to Better Housing<br>You are registered as a User<br>Your Credential for your Email is UserPass: <strong>${req.body.UserPass}</strong></div>`
-// );
-
-//GET ALL
+// Get all users
 const getAllUser = async (req, res) => {
   try {
-    const user = await userModel.find({ status: true });
-
-    if (user) {
-      res.status(200).json({
-        data: user,
-        message: "user fetched successfully",
-      });
-    } else {
-      res.status(400).json({
-        message: "User not fetched",
-      });
-    }
+    const user = await userModel.find({ status: true }).lean(); // Use .lean() for faster query
+    res.status(200).json({ data: user, message: "Users fetched successfully" });
   } catch (err) {
-    res.staus(500).json({
-      message: err.message,
-    });
+    res.status(500).json({ message: err.message });
   }
 };
+
+// Get user by ID
 const getUserbyID = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await userModel.findById(id)
-    if (user != null || user != undefined)
-      res.status(200).json({
-        message: "User Fetched successfully",
-        data: user,
-      });
-    else {
-      res.status(404).json({
-        message: "user not found",
-      });
+    const user = await userModel.findById(id).lean(); // Use .lean() for faster query
+    if (user) {
+      res
+        .status(200)
+        .json({ message: "User fetched successfully", data: user });
+    } else {
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    res.status(500).json({
-      message: "Server Error",
-      error: error,
-    });
+    res.status(500).json({ message: "Server Error", error: error });
   }
 };
 
-//Update
+// Update user
 const updateUser = async (req, res) => {
   const id = req.params.id;
-
   try {
-    const userData = await userModel.findByIdAndUpdate(id, req.body);
-    res.status(200).json({
-      data: userData,
-      message: "user updated successfully",
-    });
+    const userData = await userModel
+      .findByIdAndUpdate(id, req.body, { new: true })
+      .lean(); // Use .lean()
+    res
+      .status(200)
+      .json({ data: userData, message: "User updated successfully" });
   } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
+    res.status(500).json({ message: err.message });
   }
 };
 
-//Delete
+// Delete user
 const deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
-    const user = await userModel.findByIdAndDelete(id);
-    if (user != null || user != undefined) {
-      res.status(200).json({
-        data: user,
-        message: "Deleted Successfully",
-      });
+    const user = await userModel.findByIdAndDelete(id).lean(); // Use .lean()
+    if (user) {
+      res.status(200).json({ data: user, message: "Deleted successfully" });
     } else {
-      res.status(404).json({
-        message: "user not found",
-      });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
+    res.status(500).json({ message: err.message });
   }
 };
 
-//user login
+// User login
 const loginUser = async (req, res) => {
-  const { Email, Password, MobileNumber } = req.body; // Destructure Email and Password from request body
+  const { Email, Password, MobileNumber } = req.body;
   let user;
 
   try {
-    // Check if the input is an email or a mobile number
-    if (/\S+@\S+\.\S+/.test(Email)) {
-      // Regex to check if it's an email
-      user = await userModel.findOne({ Email }); // Find user by Email
-    } else {
-      user = await userModel.findOne({ MobileNumber }); // Find user by MobileNumber
-    }
+    // Single query with $or for Email and MobileNumber to avoid multiple MongoDB calls
+    user = await userModel
+      .findOne({ $or: [{ Email: Email }, { MobileNumber: MobileNumber }] })
+      .lean(); // Use .lean() to improve query performance
 
     if (user) {
-      const flag = encrypt.comparePassword(Password, user.Password);
-      if (flag) {
+      const isPasswordValid = await encrypt.comparePassword(
+        Password,
+        user.Password
+      );
+      if (isPasswordValid) {
         auth.createSendToken(user, 200, res); // Send token if password matches
       } else {
-        res.status(404).json({
-          message: "Invalid Password",
-        });
+        res.status(400).json({ message: "Invalid password" });
       }
     } else {
-      res.status(404).json({
-        message: "Email or Mobile Number Not Found",
-      });
+      res.status(404).json({ message: "Email or Mobile Number not found" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
