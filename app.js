@@ -25,10 +25,7 @@ app.use("/api/google", googleRoutes);
 // DATABASE CONNECTION
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.DB_URL);
     console.log("Connected to MongoDB");
   } catch (err) {
     console.error("Failed to connect to DB", err);
