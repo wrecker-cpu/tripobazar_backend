@@ -1,18 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config(); // Ensure environment variables are loaded
+require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 4000; // Use environment variable for port
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Require Routes
-const userRoutes = require("./routes/UserRoutes");
-const googleRoutes = require("./routes/GoogleRoutes");
+const userRoutes = require("../routes/UserRoutes");
+const googleRoutes = require("../routes/GoogleRoutes");
 
 app.get("/", (req, res) => {
   res.send("API is running...");
@@ -36,10 +35,8 @@ const connectDB = async () => {
   }
 };
 
-// Call the function to initialize the connection
+// Initialize DB connection
 connectDB();
 
-// Server creation
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Export the Express app for Vercel serverless
+module.exports = app;
