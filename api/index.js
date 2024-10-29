@@ -25,10 +25,7 @@ app.use("/api/google", googleRoutes);
 const connectDB = async (retries = 5) => {
   while (retries) {
     try {
-      await mongoose.connect(process.env.DB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(process.env.DB_URL);
       console.log("Connected to MongoDB");
       break; // Exit the loop on successful connection
     } catch (err) {
@@ -46,6 +43,5 @@ const connectDB = async (retries = 5) => {
 };
 
 connectDB();
-
 // Export the Express app for Vercel serverless
 module.exports = app;
