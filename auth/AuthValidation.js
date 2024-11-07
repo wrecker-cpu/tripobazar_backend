@@ -83,6 +83,7 @@ function createSendToken(user, statusCode, res) {
   };
   if (nodeEnv === "production") cookieOptions.secure = true;
 
+  
   res.cookie("jwt", token, cookieOptions);
 
   res.status(statusCode).json({
