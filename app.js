@@ -13,7 +13,8 @@ app.use(cors());
 // Require Routes
 const userRoutes = require("./routes/UserRoutes");
 const countryRoutes = require("./routes/CountryRoutes");
-const StateRoutes = require("./routes/StateRoutes");
+const stateRoutes = require("./routes/StateRoutes");
+const packageRoutes = require("./routes/PackageRoutes");
 const googleRoutes = require("./routes/GoogleRoutes");
 
 app.get("/", (req, res) => {
@@ -23,7 +24,8 @@ app.get("/", (req, res) => {
 // Define API Endpoints with prefixes
 app.use("/api/users", userRoutes);
 app.use("/api/country", countryRoutes);
-app.use("/api/state", StateRoutes);
+app.use("/api/state", stateRoutes);
+app.use("/api/package", packageRoutes);
 app.use("/api/google", googleRoutes);
 
 // DATABASE CONNECTION

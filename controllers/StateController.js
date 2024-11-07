@@ -39,7 +39,7 @@ const getAllStates = async (req, res) => {
 const getStateById = async (req, res) => {
   try {
     const stateId = req.params.id;
-    const state = await stateModel.findById(stateId);
+    const state = await stateModel.findById(stateId).populate("Packages");
 
     if (state) {
       res.status(200).json({
