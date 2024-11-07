@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+
 // Define API Endpoints with prefixes
 app.use("/api/users", userRoutes);
 app.use("/api/country", countryRoutes);
