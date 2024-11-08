@@ -20,6 +20,50 @@ const addPackage = async (req, res) => {
     }
   };
 
+  const getAllPackages = async (req, res) => {
+    try {
+      const packages = await packageModel.find();
+      if (packages.length > 0) {
+        res.status(200).json({
+          message: "Packages retrieved successfully",
+          data: packages,
+        });
+      } else {
+        res.status(404).json({ message: "No Packages found" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error in fetching Packages",
+        error: error.message,
+      });
+    }
+  };
+
+
+  const getPackageById = async (req, res) => {
+    try {
+      const packageId = req.params.id;
+      const package = await packageModel.findById(packageId).populate({
+        path: 'hotels.hotelDetails',
+        model: 'Hotel' // This should match the model name used in your Hotel schema
+      });;
+  
+      if (package) {
+        res.status(200).json({
+          message: "package retrieved successfully",
+          data: package,
+        });
+      } else {
+        res.status(404).json({ message: "package not found" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error in fetching package",
+        error: error.message,
+      });
+    }
+  };
+
 
   const updatePackage = async (req, res) => {
     try {
@@ -53,5 +97,7 @@ const addPackage = async (req, res) => {
 
 module.exports={
     addPackage,
+    getAllPackages,
+    getPackageById,
     updatePackage
 }

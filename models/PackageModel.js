@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const packageSchema = new Schema({
@@ -16,14 +16,14 @@ const packageSchema = new Schema({
     required: true,
   },
   whatsIncluded: {
-    type: [String], // Array of strings for items like 'Food', 'Hotel', 'Car', etc.
-    enum: ['Food', 'Hotel', 'Car', 'Explore', 'Travel', 'Visa'], // Restrict values to these options
+    type: [String],
+    enum: ["Food", "Hotel", "Car", "Explore", "Travel", "Visa"],
   },
   coupon: {
-    type: [String], // Array of coupon codes if any
+    type: [String],
   },
   MainPhotos: {
-    type: [String], // Array of photo URLs
+    type: [String],
   },
   dayDescription: [
     {
@@ -32,11 +32,11 @@ const packageSchema = new Schema({
         required: true,
       },
       photos: {
-        type: [String], // Array of photo URLs for each day
+        type: [String],
       },
       dayDetails: {
         type: String,
-        required: true, // Detailed description for each day
+        required: true,
       },
     },
   ],
@@ -49,15 +49,22 @@ const packageSchema = new Schema({
   thingsToMaintain: {
     type: String,
   },
-  hotel: [
+  hotels: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Hotel', // Assuming you have a separate 'Hotel' model
+      location: {
+        type: String, // Name of the location, e.g., 'Leh', 'Nubra Valley'
+      },
+      hotelDetails: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Hotel", // Reference to the Hotel model for each hotel in this location
+        },
+      ],
     },
   ],
   policies: {
     childPolicies: {
-      type: String, // You can store the text or further structure it as needed
+      type: String,
     },
     cancelPolicy: {
       type: String,
@@ -75,4 +82,4 @@ const packageSchema = new Schema({
   ],
 });
 
-module.exports = mongoose.model('Package', packageSchema);
+module.exports = mongoose.model("Package", packageSchema);
