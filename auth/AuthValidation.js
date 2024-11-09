@@ -69,8 +69,8 @@ const restrictToAdmin = (req, res, next) => {
   next(); // If the user is an admin, proceed to the next middleware or route handler
 };
 
-function signToken(id) {
-  return jwt.sign({ id }, jwtSecret || "default-secret", {
+function signToken(id,isAdmin) {
+  return jwt.sign({ id, isAdmin }, jwtSecret || "default-secret", {
     expiresIn: jwtExpires || "1h",
   });
 }
