@@ -76,14 +76,14 @@ function signToken(id) {
 }
 
 function createSendToken(user, statusCode, res) {
-  const token = signToken(user._id);
+  const token = signToken(user._id, user.isAdmin);
+
   const cookieOptions = {
     expiresIn: jwtCookieExpires,
     httpOnly: true,
   };
   if (nodeEnv === "production") cookieOptions.secure = true;
 
-  
   res.cookie("jwt", token, cookieOptions);
 
   res.status(statusCode).json({
