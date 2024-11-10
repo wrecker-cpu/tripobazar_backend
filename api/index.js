@@ -11,6 +11,7 @@ app.use(cors());
 
 // Require Routes
 const userRoutes = require("../routes/UserRoutes");
+const continentRoutes = require("../routes/ContinentRoutes");
 const countryRoutes = require("../routes/CountryRoutes");
 const stateRoutes = require("../routes/StateRoutes");
 const packageRoutes = require("../routes/PackageRoutes");
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 
 // Define API Endpoints with prefixes
 app.use("/api/users", userRoutes);
+app.use("/api/continent", continentRoutes);
 app.use("/api/country", countryRoutes);
 app.use("/api/state", stateRoutes);
 app.use("/api/package", packageRoutes);
