@@ -9,7 +9,7 @@ const countrySchema = new Schema({
   CountryCode: {
     type: String,
   },
-  PhotoUrl: {
+  CountryPhotoUrl: {
     type: String,
     required: true,
   },
