@@ -22,7 +22,7 @@ const addContinent = async (req, res) => {
 
 const getAllContinent = async (req, res) => {
     try {
-      const continent = await continentModel.find() .populate('Countries', 'CountryName'); ; // Retrieve all continent
+      const continent = await continentModel.find() .populate('Countries'); ; // Retrieve all continent
       if (continent.length > 0) {
         res.status(200).json({
           message: "continent retrieved successfully",
