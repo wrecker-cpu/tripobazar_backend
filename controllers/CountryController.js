@@ -22,7 +22,7 @@ const addCountry = async (req, res) => {
 
 const getAllCountries = async (req, res) => {
     try {
-      const countries = await countryModel.find(); // Retrieve all countries
+      const countries = await countryModel.find().populate("States"); // Retrieve all countries
       if (countries.length > 0) {
         res.status(200).json({
           message: "Countries retrieved successfully",
