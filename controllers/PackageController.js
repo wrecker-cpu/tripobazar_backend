@@ -92,6 +92,32 @@ const addPackage = async (req, res) => {
     }
   };
   
+  const deletePackage = async (req, res) => {
+    try {
+      const packageId = req.params.id; // Get country ID from URL params
+      const deleteData = req.body; // Get the data to be updated from the request body
+  
+      const updatedPackage = await packageModel.findByIdAndDelete(
+        packageId, 
+        deleteData, 
+        { new: true } // This option returns the updated document
+      );
+  
+      if (updatedPackage) {
+        res.status(200).json({
+          message: "Package deleted successfully",
+          data: updatedPackage,
+        });
+      } else {
+        res.status(404).json({ message: "Package not found" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error in updating Package",
+        error: error.message,
+      });
+    }
+  };
 
 
 
