@@ -125,5 +125,6 @@ module.exports={
     addPackage,
     getAllPackages,
     getPackageById,
-    updatePackage
+    updatePackage,
+    deletePackage
 }
