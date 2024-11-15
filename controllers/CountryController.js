@@ -64,7 +64,7 @@ const getAllCountries = async (req, res) => {
     try {
       const { name } = req.params; // Get country name from URL params
       const country = await countryModel
-        .findOne({ name }) // Find country by name
+      ({ CountryName: name }) // Find country by name
         .populate("States"); // Populate related Countries
   
       if (country) {
