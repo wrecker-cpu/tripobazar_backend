@@ -21,119 +21,115 @@ const addCountry = async (req, res) => {
 };
 
 const getAllCountries = async (req, res) => {
-    try {
-      const countries = await countryModel.find().populate("States"); // Retrieve all countries
-      if (countries.length > 0) {
-        res.status(200).json({
-          message: "Countries retrieved successfully",
-          data: countries,
-        });
-      } else {
-        res.status(404).json({ message: "No countries found" });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Error in fetching countries",
-        error: error.message,
+  try {
+    const countries = await countryModel.find().populate("States"); // Retrieve all countries
+    if (countries.length > 0) {
+      res.status(200).json({
+        message: "Countries retrieved successfully",
+        data: countries,
       });
+    } else {
+      res.status(404).json({ message: "No countries found" });
     }
-  };
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in fetching countries",
+      error: error.message,
+    });
+  }
+};
 
-  const getCountryById = async (req, res) => {
-    try {
-      const countryId = req.params.id; // Get country ID from URL params
-      const country = await countryModel.findById(countryId).populate("States"); // Find country by ID
-  
-      if (country) {
-        res.status(200).json({
-          message: "Country retrieved successfully",
-          data: country,
-        });
-      } else {
-        res.status(404).json({ message: "Country not found" });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Error in fetching country",
-        error: error.message,
-      });
-    }
-  };
+const getCountryById = async (req, res) => {
+  try {
+    const countryId = req.params.id; // Get country ID from URL params
+    const country = await countryModel.findById(countryId).populate("States"); // Find country by ID
 
-  const getCountryByName = async (req, res) => {
-    try {
-      const { name } = req.params; // Get country name from URL params
-      const country = await countryModel
-      ({ CountryName: name }) // Find country by name
-        .populate("States"); // Populate related Countries
-  
-      if (country) {
-        res.status(200).json({
-          message: "Country retrieved successfully",
-          data: country,
-        });
-      } else {
-        res.status(404).json({ message: "Country not found" });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Error in fetching Country",
-        error: error.message,
+    if (country) {
+      res.status(200).json({
+        message: "Country retrieved successfully",
+        data: country,
       });
+    } else {
+      res.status(404).json({ message: "Country not found" });
     }
-  };
-  
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in fetching country",
+      error: error.message,
+    });
+  }
+};
 
-  const updateCountry = async (req, res) => {
-    try {
-      const countryId = req.params.id; // Get country ID from URL params
-      const updateData = req.body; // Get the data to be updated from the request body
-  
-      const updatedCountry = await countryModel.findByIdAndUpdate(
-        countryId, 
-        updateData, 
-        { new: true } // This option returns the updated document
-      );
-  
-      if (updatedCountry) {
-        res.status(200).json({
-          message: "Country updated successfully",
-          data: updatedCountry,
-        });
-      } else {
-        res.status(404).json({ message: "Country not found" });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Error in updating country",
-        error: error.message,
-      });
-    }
-  };
-  
+const getCountryByName = async (req, res) => {
+  try {
+    const { name } = req.params; // Get country name from URL params
+    const country = await countryModel
+      .findOne({ CountryName: name }) // Find country by name
+      .populate("States"); // Populate related Countries
 
-  
-  const deleteCountry = async (req, res) => {
-    try {
-      const countryId = req.params.id; // Get country ID from URL params
-      const deletedCountry = await countryModel.findByIdAndDelete(countryId); // Delete the country
-  
-      if (deletedCountry) {
-        res.status(200).json({
-          message: "Country deleted successfully",
-          data: deletedCountry,
-        });
-      } else {
-        res.status(404).json({ message: "Country not found" });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Error in deleting country",
-        error: error.message,
+    if (country) {
+      res.status(200).json({
+        message: "Country retrieved successfully",
+        data: country,
       });
+    } else {
+      res.status(404).json({ message: "Country not found" });
     }
-  };
-  
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in fetching Country",
+      error: error.message,
+    });
+  }
+};
+
+const updateCountry = async (req, res) => {
+  try {
+    const countryId = req.params.id; // Get country ID from URL params
+    const updateData = req.body; // Get the data to be updated from the request body
+
+    const updatedCountry = await countryModel.findByIdAndUpdate(
+      countryId,
+      updateData,
+      { new: true } // This option returns the updated document
+    );
+
+    if (updatedCountry) {
+      res.status(200).json({
+        message: "Country updated successfully",
+        data: updatedCountry,
+      });
+    } else {
+      res.status(404).json({ message: "Country not found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in updating country",
+      error: error.message,
+    });
+  }
+};
+
+const deleteCountry = async (req, res) => {
+  try {
+    const countryId = req.params.id; // Get country ID from URL params
+    const deletedCountry = await countryModel.findByIdAndDelete(countryId); // Delete the country
+
+    if (deletedCountry) {
+      res.status(200).json({
+        message: "Country deleted successfully",
+        data: deletedCountry,
+      });
+    } else {
+      res.status(404).json({ message: "Country not found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in deleting country",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   addCountry,
@@ -141,5 +137,5 @@ module.exports = {
   getCountryById,
   getCountryByName,
   updateCountry,
-  deleteCountry
+  deleteCountry,
 };
