@@ -60,6 +60,30 @@ const getAllContinent = async (req, res) => {
     }
   };
 
+  const getContinentByName = async (req, res) => {
+    try {
+      const { name } = req.params; // Get Continent name from URL params
+      const Continent = await continentModel
+        .findOne({ name }) // Find Continent by name
+        .populate("Countries"); // Populate related Countries
+  
+      if (Continent) {
+        res.status(200).json({
+          message: "Continent retrieved successfully",
+          data: Continent,
+        });
+      } else {
+        res.status(404).json({ message: "Continent not found" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error in fetching Continent",
+        error: error.message,
+      });
+    }
+  };
+  
+
   const updateContinent = async (req, res) => {
     try {
       const ContinentId = req.params.id; // Get Continent ID from URL params
@@ -115,6 +139,7 @@ module.exports = {
   addContinent,
   getAllContinent,
   getContinentById,
+  getContinentByName,
   updateContinent,
   deleteContinent
 };
