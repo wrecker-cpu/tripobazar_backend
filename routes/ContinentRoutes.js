@@ -6,7 +6,7 @@ const router = require("express").Router();
 router.post("/", continentController.addContinent);
 router.get("/", continentController.getAllContinent);
 router.get("/:id", continentController.getContinentById);
-router.get("/:name", continentController.getContinentByName);
+router.get("/name/:name", continentController.getContinentByName);
 router.put("/:id", continentController.updateContinent);
 router.delete("/:id", continentController.deleteContinent);
 
