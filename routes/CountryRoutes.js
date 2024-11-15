@@ -6,6 +6,7 @@ const router = require("express").Router();
 router.post("/", countryController.addCountry);
 router.get("/", countryController.getAllCountries);
 router.get("/:id", countryController.getCountryById);
+router.get("/:name", countryController.getCountryByName);
 router.put("/:id", countryController.updateCountry);
 router.delete("/:id", countryController.deleteCountry);
 

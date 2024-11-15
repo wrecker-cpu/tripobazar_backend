@@ -60,6 +60,30 @@ const getAllCountries = async (req, res) => {
     }
   };
 
+  const getCountryByName = async (req, res) => {
+    try {
+      const { name } = req.params; // Get country name from URL params
+      const country = await countryModel
+        .findOne({ name }) // Find country by name
+        .populate("States"); // Populate related Countries
+  
+      if (country) {
+        res.status(200).json({
+          message: "Country retrieved successfully",
+          data: country,
+        });
+      } else {
+        res.status(404).json({ message: "Country not found" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error in fetching Country",
+        error: error.message,
+      });
+    }
+  };
+  
+
   const updateCountry = async (req, res) => {
     try {
       const countryId = req.params.id; // Get country ID from URL params
@@ -115,6 +139,7 @@ module.exports = {
   addCountry,
   getAllCountries,
   getCountryById,
+  getCountryByName,
   updateCountry,
   deleteCountry
 };
