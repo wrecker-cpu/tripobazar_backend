@@ -62,7 +62,11 @@ const getStateByName = async (req, res) => {
     const { name } = req.params; // Get state name from URL params
     const State = await stateModel
       .findOne({ StateName: name }) // Find state by name
-      .populate("Packages"); // Populate related Countries
+      .populate({
+        path: "Packages",
+        select: "title description price whatsIncluded MainPhotos", // Specify only the fields you need
+      }); 
+ // Populate related Countries
 
     if (State) {
       res.status(200).json({
