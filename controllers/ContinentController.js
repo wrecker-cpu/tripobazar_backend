@@ -24,7 +24,6 @@ const getAllContinent = async (req, res) => {
   try {
     const continent = await continentModel.find().populate({
       path: "Countries",
-      options: { limit: 1 },
       populate: {
         path: "States",
         options: { limit: 1 },
