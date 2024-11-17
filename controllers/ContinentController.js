@@ -30,7 +30,7 @@ const getAllContinent = async (req, res) => {
         select: "Packages",
         populate: {
           path: "Packages",
-          select: "price",
+          select: "price description",
         },
       },
     });
