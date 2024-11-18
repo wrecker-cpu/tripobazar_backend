@@ -70,16 +70,14 @@ const packageSchema = new Schema({
       type: String,
     },
   },
-  termsAndConditions: [
-    {
-      inclusions: {
-        type: String,
-      },
-      exclusions: {
-        type: String,
-      },
+  termsAndConditions: {
+    inclusions: {
+      type: String,
     },
-  ],
+    exclusions: {
+      type: String,
+    },
+  },
 });
 
 module.exports = mongoose.model("Package", packageSchema);
