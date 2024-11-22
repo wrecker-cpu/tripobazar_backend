@@ -63,12 +63,7 @@ const packageSchema = new Schema({
     },
   ],
   policies: {
-    childPolicies: {
-      type: String,
-    },
-    cancelPolicy: {
-      type: String,
-    },
+    type:String,
   },
   termsAndConditions: {
     inclusions: {
