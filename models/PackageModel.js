@@ -66,12 +66,7 @@ const packageSchema = new Schema({
     type:String,
   },
   termsAndConditions: {
-    inclusions: {
-      type: String,
-    },
-    exclusions: {
-      type: String,
-    },
+    type:String,
   },
 });
 
