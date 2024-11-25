@@ -6,13 +6,13 @@ const hotelSchema = new Schema({
     type: String,
     required: true,
   },
-  PhotoUrl: {
+  hotelPhotoUrl: {
     type: [String],
   },
-  Rating:{
+  hotelRating:{
     type:Number,
   },
-  HotelRate:{
+  hotelPrice:{
     type:Number,
   }
 });
