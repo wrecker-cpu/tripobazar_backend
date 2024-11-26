@@ -44,7 +44,7 @@ const getAllUser = async (req, res) => {
 const getUserbyID = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await userModel.findById(id).lean(); // Use .lean() for faster query
+    const user = await userModel.findById(id).lean().populate("Wishlist"); // Use .lean() for faster query
     if (user) {
       res
         .status(200)

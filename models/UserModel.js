@@ -11,7 +11,7 @@ const userSchema = new Schema({
   MobileNumber: {
     type: String,
   },
-  FullName:{
+  FullName: {
     type: String,
   },
   DateOfBirth: {
@@ -29,6 +29,10 @@ const userSchema = new Schema({
     type: Date,
     default: null, // Initialize to null if not set
   },
+  Address: { type: String },
+  MaritalStatus: { type: String },
+  PinCode: { type: String },
+  WishList: { type: Schema.Types.ObjectId, ref: "Country" },
 });
 userSchema.methods.changedPassword = function (jwtIat) {
   if (this.passwordChangedAt) {
