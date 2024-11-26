@@ -2,21 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema; //creation object of schema class
 
 const userSchema = new Schema({
-  Email: {
-    type: String,
-  },
-  Password: {
-    type: String,
-  },
-  MobileNumber: {
-    type: String,
-  },
-  FullName: {
-    type: String,
-  },
-  DateOfBirth: {
-    type: Date,
-  },
+  Email: { type: String },
+  Password: { type: String },
+  MobileNumber: { type: String },
+  FullName: { type: String },
+  DateOfBirth: { type: Date },
   status: {
     type: Boolean,
     default: true,
