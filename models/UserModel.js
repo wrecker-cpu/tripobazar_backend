@@ -20,7 +20,7 @@ const userSchema = new Schema({
     default: null,
   },
   Address: { type: String },
-  MaritalStatus: { type: String },
+  MaritalStatus: { type: String,enum: ["Married", "Not-Married"] },
   PinCode: { type: String },
   WishListCountries: [{ type: Schema.Types.ObjectId, ref: "Country" }],
   WishListStates: [{ type: Schema.Types.ObjectId, ref: "State" }],
