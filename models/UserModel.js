@@ -21,7 +21,7 @@ const userSchema = new Schema({
   },
   Address: { type: String },
   MaritalStatus: { type: String, enum: ["Married", "Not-Married"] },
-  Gender:{type:String,enum:["Male","Female","Non-Binary"]},
+  Gender: { type: String, enum: ["Male", "Female", "Non-Binary"] },
   PinCode: { type: String },
   WishListCountries: [{ type: Schema.Types.ObjectId, ref: "Country" }],
   WishListStates: [{ type: Schema.Types.ObjectId, ref: "State" }],
@@ -29,6 +29,7 @@ const userSchema = new Schema({
     {
       TravellersName: { type: String },
       TravellersEmail: { type: String },
+      TravellersAge: { type: String },
       TravellersNumber: { type: String },
       TravellersDateOfBirth: { type: Date },
       TravellersPassportNumber: { type: String },
