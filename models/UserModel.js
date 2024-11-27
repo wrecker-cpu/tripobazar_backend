@@ -28,7 +28,7 @@ const userSchema = new Schema({
   ExtraTravellers: [
     {
       TravellersName: { type: String },
-      TravelllersEmail: { type: String },
+      TravellersEmail: { type: String },
       TravellersNumber: { type: String },
       TravellersDateOfBirth: { type: Date },
       TravellersPassportNumber: { type: String },
