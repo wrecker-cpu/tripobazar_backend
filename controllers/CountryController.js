@@ -67,11 +67,11 @@ const getCountryByName = async (req, res) => {
       .findOne({ CountryName: name }) // Find country by name
       .populate({
         path: "States",
-        options: { limit: 1 },
         select: "Packages",
         populate: {
           path: "Packages",
-          select: "price description",
+          options: { limit: 1 },
+          select: "price",
         },
       });
 
