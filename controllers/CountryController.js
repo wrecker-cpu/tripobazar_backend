@@ -67,7 +67,7 @@ const getCountryByName = async (req, res) => {
       .findOne({ CountryName: name }) // Find country by name
       .populate({
         path: "States",
-        select: "Packages",
+        select: "Packages StatePhotoUrl",
         populate: {
           path: "Packages",
           options: { limit: 1 },
