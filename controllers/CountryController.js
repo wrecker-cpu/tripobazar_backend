@@ -70,15 +70,25 @@ const getCountryByName = async (req, res) => {
         select: "Packages StatePhotoUrl StateName",
         populate: {
           path: "Packages",
-          options: { limit: 1 },
           select: "price",
         },
-      });
+      })
+      .lean(); // Convert the result to a plain JavaScript object for easier manipulation
 
+    // Check if country is found
     if (country) {
+      // Use slice to limit to one state and one package
+      const processedCountry = {
+        ...country,
+        States: country.States.map((state) => ({
+          ...state,
+          Packages: state.Packages.slice(0, 1), // Limit to the first package for the state
+        })),
+      };
+
       res.status(200).json({
         message: "Country retrieved successfully",
-        data: country,
+        data: processedCountry,
       });
     } else {
       res.status(404).json({ message: "Country not found" });
@@ -90,6 +100,7 @@ const getCountryByName = async (req, res) => {
     });
   }
 };
+
 
 const updateCountry = async (req, res) => {
   try {
