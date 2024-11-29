@@ -22,23 +22,37 @@ const addContinent = async (req, res) => {
 
 const getAllContinent = async (req, res) => {
   try {
-    const continent = await continentModel.find().populate({
-      path: "Countries",
-      populate: {
-        path: "States",
-
-        select: "Packages",
+    const continent = await continentModel
+      .find()
+      .populate({
+        path: "Countries",
         populate: {
-          path: "Packages",
-          options: { limit: 1 },
-          select: "price description",
+          path: "States",
+          select: "Packages",
+          populate: {
+            path: "Packages",
+            select: "price description",
+          },
         },
-      },
-    });
-    if (continent.length > 0) {
+      })
+      .lean(); // Use .lean() to make the result a plain JavaScript object for manipulation
+
+    // Use slice to limit the number of states and packages after data is fetched
+    const processedContinents = continent.map((continent) => ({
+      ...continent,
+      Countries: continent.Countries.map((country) => ({
+        ...country,
+        States: country.States.slice(0, 1).map((state) => ({
+          ...state,
+          Packages: state.Packages.slice(0, 1), // Limit to one package per state
+        })),
+      })),
+    }));
+
+    if (processedContinents.length > 0) {
       res.status(200).json({
-        message: "continent retrieved successfully",
-        data: continent,
+        message: "Continent retrieved successfully",
+        data: processedContinents,
       });
     } else {
       res.status(404).json({ message: "No continent found" });
