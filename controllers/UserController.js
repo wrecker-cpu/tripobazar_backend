@@ -41,6 +41,20 @@ const getAllUser = async (req, res) => {
   }
 };
 
+const updateAllUsers = async (req, res) => {
+  try {
+    const updateData = req.body;
+    const result = await userModel.updateMany({}, updateData);
+
+    res.status(200).json({
+      message: "Users updated successfully",
+      modifiedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating users", error: error.message });
+  }
+};
+
 // Get user by ID
 const getUserbyID = async (req, res) => {
   try {
@@ -124,6 +138,7 @@ module.exports = {
   createUser,
   getAllUser,
   updateUser,
+  updateAllUsers,
   getUserbyID,
   deleteUser,
   loginUser,
