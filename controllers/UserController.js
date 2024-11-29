@@ -10,6 +10,7 @@ const createUser = async (req, res) => {
       Email: req.body.Email,
       Password: encrypt.generatePassword(req.body.Password), // Ensure async if possible
       MobileNumber: req.body.MobileNumber,
+      Coupons:["67497c0f3600417c0e450d7d"],
       FullName: "",
       DateOfBirth: "",
       status: req.body.status,
@@ -47,7 +48,7 @@ const getUserbyID = async (req, res) => {
     const user = await userModel
       .findById(id)
       .lean()
-      .populate("WishListCountries WishListStates"); // Use .lean() for faster query
+      .populate("WishListCountries WishListStates Coupons"); // Use .lean() for faster query
     if (user) {
       res
         .status(200)

@@ -16,6 +16,7 @@ const countryRoutes = require("../routes/CountryRoutes");
 const stateRoutes = require("../routes/StateRoutes");
 const packageRoutes = require("../routes/PackageRoutes");
 const hotelRoutes = require("../routes/HotelRoutes");
+const couponRoutes = require("./routes/CouponRoutes");
 const googleRoutes = require("../routes/GoogleRoutes");
 
 app.get("/", (req, res) => {
@@ -29,6 +30,7 @@ app.use("/api/country", countryRoutes);
 app.use("/api/state", stateRoutes);
 app.use("/api/package", packageRoutes);
 app.use("/api/hotel", hotelRoutes);
+app.use("/api/coupon", couponRoutes);
 app.use("/api/google", googleRoutes);
 
 // DATABASE CONNECTION

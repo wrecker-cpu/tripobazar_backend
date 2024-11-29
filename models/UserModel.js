@@ -20,6 +20,7 @@ const userSchema = new Schema({
     default: null,
   },
   Address: { type: String },
+  Coupons: [{ type: Schema.Types.ObjectId, ref: 'Coupon' }],
   MaritalStatus: { type: String, enum: ["Married", "Not-Married"] },
   Gender: { type: String, enum: ["Male", "Female", "Non-Binary"] },
   PinCode: { type: String },
