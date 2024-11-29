@@ -26,10 +26,11 @@ const getAllContinent = async (req, res) => {
       path: "Countries",
       populate: {
         path: "States",
-        options: { limit: 1 },
+
         select: "Packages",
         populate: {
           path: "Packages",
+          options: { limit: 1 },
           select: "price description",
         },
       },
