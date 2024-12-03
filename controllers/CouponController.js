@@ -71,7 +71,7 @@ const updateCoupon = async (req, res) => {
       { new: true } // This option returns the updated document
     );
 
-    if (updatedcoupon) {
+    if (updatedCoupon) {
       res.status(200).json({
         message: "Coupon updated successfully",
         data: updatedCoupon,

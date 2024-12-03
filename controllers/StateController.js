@@ -1,5 +1,7 @@
 const stateModel = require("../models/StateModel");
 const auth = require("../auth/AuthValidation");
+const NodeCache = require("node-cache");
+const cache = new NodeCache();
 require("dotenv").config();
 
 const addState = async (req, res) => {
@@ -7,6 +9,7 @@ const addState = async (req, res) => {
     const savedState = await stateModel.create(req.body);
     if (savedState) {
       res.status(201).json({ message: "State Added Successfully", savedState });
+      cache.del("allStates");
     } else {
       res.status(400).json({ message: "Incomplete state Details" });
     }
@@ -19,8 +22,23 @@ const addState = async (req, res) => {
 
 const getAllStates = async (req, res) => {
   try {
+    // Check if states data is cached
+    const cachedStates = cache.get("allStates");
+
+    if (cachedStates) {
+      return res.status(200).json({
+        message: "States retrieved successfully from cache",
+        data: cachedStates,
+      });
+    }
+
+    // Fetch data from database
     const states = await stateModel.find();
+
     if (states.length > 0) {
+      // Cache the retrieved states
+      cache.set("allStates", states);
+
       res.status(200).json({
         message: "States retrieved successfully",
         data: states,
@@ -65,13 +83,13 @@ const getStateByName = async (req, res) => {
       .populate({
         path: "Packages",
         select: "title description price whatsIncluded MainPhotos", // Specify only the fields you need
-      }); 
- // Populate related Countries
+      });
+    // Populate related Countries
 
     if (State) {
       res.status(200).json({
         message: "State retrieved successfully",
-        data:State,
+        data: State,
       });
     } else {
       res.status(404).json({ message: "State not found" });
@@ -100,6 +118,7 @@ const updateState = async (req, res) => {
         message: "State updated successfully",
         data: updatedState,
       });
+      cache.del("allStates");
     } else {
       res.status(404).json({ message: "State not found" });
     }
@@ -111,25 +130,26 @@ const updateState = async (req, res) => {
   }
 };
 const deleteState = async (req, res) => {
-    try {
-        const stateId = req.params.id; // Get state ID from URL params
-        const deletedState = await stateModel.findByIdAndDelete(stateId); // Delete the state
-    
-        if (deletedState) {
-          res.status(200).json({
-            message: "State deleted successfully",
-            data: deletedState,
-          });
-        } else {
-          res.status(404).json({ message: "State not found" });
-        }
-      } catch (error) {
-        res.status(500).json({
-          message: "Error in deleting state",
-          error: error.message,
-        });
-      }
-}
+  try {
+    const stateId = req.params.id; // Get state ID from URL params
+    const deletedState = await stateModel.findByIdAndDelete(stateId); // Delete the state
+
+    if (deletedState) {
+      res.status(200).json({
+        message: "State deleted successfully",
+        data: deletedState,
+      });
+      cache.del("allStates");
+    } else {
+      res.status(404).json({ message: "State not found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in deleting state",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   addState,

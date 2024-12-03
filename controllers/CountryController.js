@@ -1,5 +1,8 @@
 const countryModel = require("../models/CountryModel");
 const auth = require("../auth/AuthValidation");
+const NodeCache = require("node-cache");
+const cache = new NodeCache(); // Cache TTL of 5 minutes
+
 require("dotenv").config();
 
 const addCountry = async (req, res) => {
@@ -10,6 +13,7 @@ const addCountry = async (req, res) => {
         message: "Country Added Successfully",
         data: savedCountry,
       });
+      cache.del("allCountries");
     } else {
       res.status(400).json({ message: "Incomplete Country Details" });
     }
@@ -22,8 +26,22 @@ const addCountry = async (req, res) => {
 
 const getAllCountries = async (req, res) => {
   try {
-    const countries = await countryModel.find().populate("States"); // Retrieve all countries
+    // Check cache for all countries data
+    const cachedCountries = cache.get("allCountries");
+    if (cachedCountries) {
+      return res.status(200).json({
+        message: "Countries retrieved successfully from cache",
+        data: cachedCountries,
+      });
+    }
+
+    // Fetch countries from database
+    const countries = await countryModel.find().populate("States");
+
     if (countries.length > 0) {
+      // Cache the result
+      cache.set("allCountries", countries);
+
       res.status(200).json({
         message: "Countries retrieved successfully",
         data: countries,
@@ -101,7 +119,6 @@ const getCountryByName = async (req, res) => {
   }
 };
 
-
 const updateCountry = async (req, res) => {
   try {
     const countryId = req.params.id; // Get country ID from URL params
@@ -118,6 +135,7 @@ const updateCountry = async (req, res) => {
         message: "Country updated successfully",
         data: updatedCountry,
       });
+      cache.del("allCountries");
     } else {
       res.status(404).json({ message: "Country not found" });
     }
@@ -139,6 +157,7 @@ const deleteCountry = async (req, res) => {
         message: "Country deleted successfully",
         data: deletedCountry,
       });
+      cache.del("allCountries");
     } else {
       res.status(404).json({ message: "Country not found" });
     }

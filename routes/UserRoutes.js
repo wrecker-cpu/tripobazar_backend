@@ -11,7 +11,7 @@ router.get("/", auth.protect, auth.restrictToAdmin, userController.getAllUser);
 // Route for getting, updating, and deleting a user by ID
 router.get("/data/:id",auth.protect, userController.getUserbyID);
 router.put("/:id", userController.updateUser);
-router.put("/updateAll", userController.updateAllUsers);
+router.put("/all/updateAll", userController.updateAllUsers);
 router.delete("/:id", userController.deleteUser);
 
 // User login route

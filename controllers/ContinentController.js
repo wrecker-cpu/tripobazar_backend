@@ -1,5 +1,7 @@
 const continentModel = require("../models/ContinentModel");
 const auth = require("../auth/AuthValidation");
+const NodeCache = require("node-cache");
+const cache = new NodeCache(); // Cache TTL of 5 minutes
 require("dotenv").config();
 
 const addContinent = async (req, res) => {
@@ -10,6 +12,7 @@ const addContinent = async (req, res) => {
         message: "Continent Added Successfully",
         data: savedContinent,
       });
+      cache.del("allContinents")
     } else {
       res.status(400).json({ message: "Incomplete Continent Details" });
     }
@@ -20,8 +23,21 @@ const addContinent = async (req, res) => {
   }
 };
 
+
+
 const getAllContinent = async (req, res) => {
   try {
+    // Check if the data is already cached
+    const cachedContinents = cache.get("allContinents");
+
+    if (cachedContinents) {
+      return res.status(200).json({
+        message: "Continent retrieved successfully from cache",
+        data: cachedContinents,
+      });
+    }
+
+    // Fetch from the database
     const continent = await continentModel
       .find()
       .populate({
@@ -35,21 +51,23 @@ const getAllContinent = async (req, res) => {
           },
         },
       })
-      .lean(); // Use .lean() to make the result a plain JavaScript object for manipulation
+      .lean();
 
-    // Use slice to limit the number of states and packages after data is fetched
     const processedContinents = continent.map((continent) => ({
       ...continent,
       Countries: continent.Countries.map((country) => ({
         ...country,
         States: country.States.slice(0, 1).map((state) => ({
           ...state,
-          Packages: state.Packages.slice(0, 1), // Limit to one package per state
+          Packages: state.Packages.slice(0, 1),
         })),
       })),
     }));
 
     if (processedContinents.length > 0) {
+      // Store the processed data in the cache
+      cache.set("allContinents", processedContinents);
+
       res.status(200).json({
         message: "Continent retrieved successfully",
         data: processedContinents,
@@ -64,6 +82,7 @@ const getAllContinent = async (req, res) => {
     });
   }
 };
+
 
 const getContinentById = async (req, res) => {
   try {
@@ -127,6 +146,7 @@ const updateContinent = async (req, res) => {
         message: "Continent updated successfully",
         data: updatedContinent,
       });
+      cache.del("allContinents")
     } else {
       res.status(404).json({ message: "Continent not found" });
     }
@@ -150,6 +170,7 @@ const deleteContinent = async (req, res) => {
         message: "Continent deleted successfully",
         data: deletedContinent,
       });
+      cache.del("allContinents")
     } else {
       res.status(404).json({ message: "Continent not found" });
     }
