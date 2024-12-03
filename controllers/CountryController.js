@@ -1,7 +1,7 @@
 const countryModel = require("../models/CountryModel");
 const auth = require("../auth/AuthValidation");
 const NodeCache = require("node-cache");
-const cache = new NodeCache(); // Cache TTL of 5 minutes
+const cache = new NodeCache({ stdTTL: 1800 });
 
 require("dotenv").config();
 

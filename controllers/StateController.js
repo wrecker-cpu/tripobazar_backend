@@ -1,7 +1,7 @@
 const stateModel = require("../models/StateModel");
 const auth = require("../auth/AuthValidation");
 const NodeCache = require("node-cache");
-const cache = new NodeCache();
+const cache = new NodeCache({ stdTTL: 1800 });
 require("dotenv").config();
 
 const addState = async (req, res) => {
