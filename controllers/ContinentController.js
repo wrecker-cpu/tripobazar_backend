@@ -12,7 +12,7 @@ const addContinent = async (req, res) => {
         message: "Continent Added Successfully",
         data: savedContinent,
       });
-      cache.del("allContinents")
+      cache.del("allContinents");
     } else {
       res.status(400).json({ message: "Incomplete Continent Details" });
     }
@@ -22,8 +22,6 @@ const addContinent = async (req, res) => {
       .json({ message: "Error in creating", error: error.message });
   }
 };
-
-
 
 const getAllContinent = async (req, res) => {
   try {
@@ -83,7 +81,6 @@ const getAllContinent = async (req, res) => {
   }
 };
 
-
 const getContinentById = async (req, res) => {
   try {
     const ContinentId = req.params.id; // Get Continent ID from URL params
@@ -109,21 +106,37 @@ const getContinentById = async (req, res) => {
 
 const getContinentByName = async (req, res) => {
   try {
-    const { name } = req.params; // Get Continent name from URL params
+    const { name } = req.params; // Get continent name from URL params
+    const cacheKey = `continent_${name}`; // Create a unique cache key for each continent
+
+    // Check if the continent data is cached
+    const cachedContinent = cache.get(cacheKey);
+
+    if (cachedContinent) {
+      return res.status(200).json({
+        message: "Continent retrieved successfully from cache",
+        data: cachedContinent,
+      });
+    }
+
+    // Fetch continent data from the database
     const Continent = await continentModel
-      .findOne({ name }) // Find Continent by name
-      .populate("Countries"); // Populate related Countries
+      .findOne({ name }) // Find continent by name
+      .populate("Countries"); // Populate related countries
 
     if (Continent) {
-      res.status(200).json({
+      // Cache the retrieved continent data
+      cache.set(cacheKey, Continent);
+
+      return res.status(200).json({
         message: "Continent retrieved successfully",
         data: Continent,
       });
     } else {
-      res.status(404).json({ message: "Continent not found" });
+      return res.status(404).json({ message: "Continent not found" });
     }
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error in fetching Continent",
       error: error.message,
     });
@@ -146,7 +159,7 @@ const updateContinent = async (req, res) => {
         message: "Continent updated successfully",
         data: updatedContinent,
       });
-      cache.del("allContinents")
+      cache.del("allContinents");
     } else {
       res.status(404).json({ message: "Continent not found" });
     }
@@ -170,7 +183,7 @@ const deleteContinent = async (req, res) => {
         message: "Continent deleted successfully",
         data: deletedContinent,
       });
-      cache.del("allContinents")
+      cache.del("allContinents");
     } else {
       res.status(404).json({ message: "Continent not found" });
     }
