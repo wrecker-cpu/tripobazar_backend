@@ -78,15 +78,30 @@ const getStateById = async (req, res) => {
 const getStateByName = async (req, res) => {
   try {
     const { name } = req.params; // Get state name from URL params
+    const cacheKey = `state_${name}`; // Create a unique cache key for each state
+
+    // Check if state data is cached
+    const cachedState = cache.get(cacheKey);
+
+    if (cachedState) {
+      return res.status(200).json({
+        message: "State retrieved successfully from cache",
+        data: cachedState,
+      });
+    }
+
+    // Fetch state data from database
     const State = await stateModel
       .findOne({ StateName: name }) // Find state by name
       .populate({
         path: "Packages",
         select: "title description price whatsIncluded MainPhotos", // Specify only the fields you need
       });
-    // Populate related Countries
 
     if (State) {
+      // Cache the retrieved state
+      cache.set(cacheKey, State);
+
       res.status(200).json({
         message: "State retrieved successfully",
         data: State,
@@ -101,6 +116,7 @@ const getStateByName = async (req, res) => {
     });
   }
 };
+
 
 const updateState = async (req, res) => {
   try {
