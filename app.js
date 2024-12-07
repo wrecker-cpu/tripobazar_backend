@@ -1,11 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const compression = require("compression");
 const cors = require("cors");
 require("dotenv").config(); // Ensure environment variables are loaded
 
 const app = express();
 const PORT = process.env.PORT || 4000; // Use environment variable for port
 
+
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
