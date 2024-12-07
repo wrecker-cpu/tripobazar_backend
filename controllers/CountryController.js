@@ -81,6 +81,19 @@ const getCountryById = async (req, res) => {
 const getCountryByName = async (req, res) => {
   try {
     const { name } = req.params; // Get country name from URL params
+    const cacheKey = `country_${name}`; // Create a unique cache key for each country
+
+    // Check if country data is cached
+    const cachedCountry = cache.get(cacheKey);
+
+    if (cachedCountry) {
+      return res.status(200).json({
+        message: "Country retrieved successfully from cache",
+        data: cachedCountry,
+      });
+    }
+
+    // Fetch country data from the database
     const country = await countryModel
       .findOne({ CountryName: name }) // Find country by name
       .populate({
@@ -93,9 +106,8 @@ const getCountryByName = async (req, res) => {
       })
       .lean(); // Convert the result to a plain JavaScript object for easier manipulation
 
-    // Check if country is found
     if (country) {
-      // Use slice to limit to one state and one package
+      // Process the data to limit to one state and one package
       const processedCountry = {
         ...country,
         States: country.States.map((state) => ({
@@ -103,6 +115,9 @@ const getCountryByName = async (req, res) => {
           Packages: state.Packages.slice(0, 1), // Limit to the first package for the state
         })),
       };
+
+      // Cache the retrieved country data
+      cache.set(cacheKey, processedCountry);
 
       res.status(200).json({
         message: "Country retrieved successfully",
@@ -113,7 +128,7 @@ const getCountryByName = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({
-      message: "Error in fetching Country",
+      message: "Error in fetching country",
       error: error.message,
     });
   }
