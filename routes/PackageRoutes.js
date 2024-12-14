@@ -7,5 +7,6 @@ router.get("/", packageController.getAllPackages);
 router.get("/:id", packageController.getPackageById);
 router.put("/:id", packageController.updatePackage);
 router.delete("/:id", packageController.deletePackage);
+router.post("/verifyAmount", packageController.verifyAmount);
 
 module.exports = router;

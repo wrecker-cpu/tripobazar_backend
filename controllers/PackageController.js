@@ -1,5 +1,7 @@
 const packageModel = require("../models/PackageModel");
 const auth = require("../auth/AuthValidation");
+const couponModel = require("../models/CouponModel");
+const hotelModel = require("../models/HotelModel");
 const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 1800 });
 require("dotenv").config();
@@ -135,10 +137,103 @@ const deletePackage = async (req, res) => {
   }
 };
 
+const calculateTotalPrice = async ({
+  selectedHotels,
+  Pack_id,
+  guests,
+  coupon,
+}) => {
+  // Step 1: Calculate the main price
+
+  const packageDetails = await packageModel.findById(Pack_id);
+  if (!packageDetails) {
+    throw new Error("Package not found");
+  }
+  const basePrice = packageDetails.price;
+  const mainPrice = basePrice * guests;
+
+  // Initialize totalHotelPrice
+  let totalHotelPrice = 0;
+
+  // Step 2: Calculate the total hotel price
+  for (const hotel of selectedHotels) {
+    try {
+      // Fetch hotel details dynamically from the HotelModel
+      const hotelData = await hotelModel.findById(hotel._id);
+      if (!hotelData) {
+        console.warn(`Hotel not found for ID: ${hotel._id}`);
+        continue; // Skip this iteration if the hotel is not found
+      }
+
+      // Calculate the price for the current hotel
+      let price = hotelData.hotelPrice * hotel.room;
+
+      // Add price for additional adults
+      if (hotel.adults > 1) {
+        price += (hotel.adults - 1) * hotelData.hotelPrice * 0.85 * hotel.room;
+      }
+
+      // Add price for children
+      if (hotel.children > 0) {
+        price += hotel.extraBed
+          ? hotel.children * hotelData.hotelPrice * 0.75
+          : hotel.children * hotelData.hotelPrice * 0.5;
+      }
+
+      // Add the current hotel's calculated price to the total
+      totalHotelPrice += price;
+    } catch (error) {
+      console.error(`Error fetching hotel data for ID: ${hotel._id}`, error);
+    }
+  }
+
+  // Step 3: Calculate the total cost
+  const totalCost = mainPrice + totalHotelPrice;
+
+  // Step 4: Apply the coupon
+  if (coupon) {
+    const couponDetails = await couponModel.findById(coupon.id);
+    const discount = Math.min(
+      (totalCost * couponDetails.discountPercentage) / 100,
+      couponDetails.maxDiscount
+    );
+    return totalCost - discount;
+  }
+
+  return totalCost;
+};
+
+
+const verifyAmount = async (req, res) => {
+  try {
+    const { selectedHotels, Pack_id, guests, coupon } = req.body;
+
+    // Validate input data
+    if (!Pack_id || !guests || !Array.isArray(selectedHotels)) {
+      return res.status(400).json({ error: "Invalid input data" });
+    }
+
+    // Recalculate price
+    const totalPrice = await calculateTotalPrice({
+      selectedHotels,
+      Pack_id, // You need to pass Pack_id here, not basePrice
+      guests,
+      coupon,
+    });
+
+    // Return the calculated price and proceed with booking logic
+    res.status(200).json({ totalPrice });
+  } catch (error) {
+    console.error("Error calculating price:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   addPackage,
   getAllPackages,
   getPackageById,
   updatePackage,
   deletePackage,
+  verifyAmount,
 };
