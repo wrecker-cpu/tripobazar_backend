@@ -7,11 +7,14 @@ require("dotenv").config(); // Ensure environment variables are loaded
 const app = express();
 const PORT = process.env.PORT || 4000; // Use environment variable for port
 
-
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://tripobazar.vercel.app", // Replace with your actual frontend URL
+  })
+);
 
 // Require Routes
 const userRoutes = require("./routes/UserRoutes");
@@ -26,7 +29,6 @@ const googleRoutes = require("./routes/GoogleRoutes");
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-
 
 // Define API Endpoints with prefixes
 app.use("/api/users", userRoutes);

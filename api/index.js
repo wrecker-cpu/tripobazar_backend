@@ -7,7 +7,11 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://tripobazar.vercel.app", // Replace with your actual frontend URL
+  })
+);
 
 // Require Routes
 const userRoutes = require("../routes/UserRoutes");
