@@ -227,6 +227,7 @@ const verifyAmount = async (req, res) => {
   try {
     const { selectedHotels, Pack_id, guests, coupon } = req.body;
 
+
     // Validate input data
     if (!Pack_id || !guests || !Array.isArray(selectedHotels)) {
       return res.status(400).json({ error: "Invalid input data" });
