@@ -42,7 +42,12 @@ app.use("/api/google", googleRoutes);
 const connectDB = async (retries = 5) => {
   while (retries) {
     try {
-      await mongoose.connect(process.env.DB_URL);
+      await mongoose.connect(process.env.DB_URL,{
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        maxPoolSize: 10, // Maximum connections in the pool
+        minPoolSize: 2, 
+      });
       console.log("Connected to MongoDB");
       break; // Exit the loop on successful connection
     } catch (err) {
