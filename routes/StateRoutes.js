@@ -1,11 +1,12 @@
 const stateController = require("../controllers/StateController");
+const auth = require("../auth/AuthValidation");
 const router = require("express").Router();
 
-router.post("/", stateController.addState);
+router.post("/", auth.protect, auth.restrictToAdmin,stateController.addState);
 router.get("/", stateController.getAllStates);
 router.get("/:id", stateController.getStateById);
 router.get("/name/:name", stateController.getStateByName);
-router.put("/:id", stateController.updateState);
-router.delete("/:id", stateController.deleteState);
+router.put("/:id", auth.protect, auth.restrictToAdmin,stateController.updateState);
+router.delete("/:id",  auth.protect, auth.restrictToAdmin,stateController.deleteState);
 
 module.exports = router;

@@ -12,7 +12,7 @@ router.get("/", auth.protect, auth.restrictToAdmin, userController.getAllUser);
 router.get("/data/:id",auth.protect, userController.getUserbyID);
 router.put("/:id", userController.updateUser);
 router.put("/all/updateAll", userController.updateAllUsers);
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", auth.protect, auth.restrictToAdmin,userController.deleteUser);
 
 // User login route
 router.post("/login", userController.loginUser);
